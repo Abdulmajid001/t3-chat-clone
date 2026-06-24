@@ -1,10 +1,10 @@
 import Image from "next/image";
-import ChatMessageView from "../../../modules/chat/components/chat-message-view";
 import { currentUser } from "@clerk/nextjs/server";
+import ChatMessageView from "@/modules/chat/components/chat-message-view";
 
 export default async function Home() {
-  const user = await currentUser()
-  console.log("current",user.firstName)
+  const user = await currentUser();
+
   return (
     <div>
       <ChatMessageView firstName={user.firstName} />

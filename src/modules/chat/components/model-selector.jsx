@@ -14,11 +14,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 
 export function ModelSelector({
   models,
@@ -42,8 +42,8 @@ export function ModelSelector({
   const isFreeModel = (model) => {
     return (
       model.pricing.prompt === "0" &&
-      model.pricing.completion === "0" &&
-      model.pricing.request === "0"
+      model.pricing.completion === "0" 
+      // model.pricing.request === "0"
     );
   };
 
@@ -62,8 +62,10 @@ export function ModelSelector({
       model.architecture.modality.toLowerCase().includes(query)
     );
   });
+  
   return (
     <>
+      {/* Popover: Displays lightweight, contextual content without interrupting the user's workflow. Ideal for quick actions, filters, menus */}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -97,7 +99,7 @@ export function ModelSelector({
               />
             </div>
           </div>
-          <ScrollArea className={"h-[400px]"}>
+          <ScrollArea className={"h-100"}>
             <div className="p-2">
               <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">
                 Available Models ({filteredModels.length})
@@ -174,6 +176,7 @@ export function ModelSelector({
         </PopoverContent>
       </Popover>
 
+      {/* Dialog: displays a modal that requires the user's attention and temporarily blocks UI */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
           <DialogHeader>
@@ -185,7 +188,7 @@ export function ModelSelector({
               Detailed information about this AI model
             </DialogDescription>
           </DialogHeader>
-          <ScrollArea className=" pr-4 h-[400px]">
+          <ScrollArea className=" pr-4 h-100">
             {selectedForDetails && (
               <div className="space-y-6">
                 {/* Description */}

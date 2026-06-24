@@ -24,8 +24,8 @@ const ChatMessageView = ({firstName}) => {
             onMessageSelect={handleMessageSelect}
         />
         <ChatMessageForm
-        initialMessage={selectedMessage}
-        onMessageChange={handleMessageChange}
+            initialMessage={selectedMessage}
+            onMessageChange={handleMessageChange}
         />
     </div>
   )

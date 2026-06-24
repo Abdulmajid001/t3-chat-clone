@@ -5,19 +5,28 @@ import { Button } from "@/components/ui/button";
 // import { Send } from "lucide-react";
 // import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useAIModels } from "@/modules/ai-agent/hook/use-ai-agent";
 import { Send } from "lucide-react";
 import { useEffect, useState } from "react";
-// import { useAIModels } from "@/modules/ai-agent/hook/ai-agent";
-// import { Spinner } from "@/components/ui/spinner";
-// import { ModelSelector } from "./model-selector";
+import { ModelSelector } from "./model-selector";
+import { Spinner } from "@/components/ui/spinner";
 // import { useCreateChat } from "../hooks/chat";
 // import { toast } from "sonner";
 
 const ChatMessageForm = ({ initialMessage, onMessageChange }) => {
-  // const { data: models, isPending } = useAIModels();
-
-  // const [selectedModel, setSelectedModel] = useState(models?.models[0]?.id);
+  const [selectedModel, setSelectedModel] = useState("");
   const [message, setMessage] = useState("");
+
+  const { data: models, isPending } = useAIModels();
+
+// Set the first available AI model as the default once the models have finished loading
+  useEffect(() => {
+    if (models?.models?.length > 0) {
+      setSelectedModel(models.models[0].id);
+    }
+  }, [models]);
+
+
   // const { mutateAsync, isPending: isChatPending } = useCreateChat();
 
   useEffect(() => {
@@ -60,10 +69,10 @@ const ChatMessageForm = ({ initialMessage, onMessageChange }) => {
             }}
           />
 
-          <div className="flex items-center justify-between gap-2 px-3 py-2 border-t">
+          <div className="flex items-center justify-between gap-2 px-3 py-2">
             {/* Model Selector */}
             <div className="flex items-center gap-1">
-              {/* {isPending ? (
+              {isPending ? (
                 <>
                   <Spinner />
                 </>
@@ -76,8 +85,7 @@ const ChatMessageForm = ({ initialMessage, onMessageChange }) => {
                     className="ml-1"
                   />
                 </>
-              )} */}
-              Modal selection
+              )}
             </div>
             <Button
               type="submit"
