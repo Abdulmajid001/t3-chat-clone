@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Sunrise, Sunset } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import { Button } from "@/components/ui/button";
@@ -16,9 +16,9 @@ export function ModeToggle() {
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
     >
       {theme === "light" ? (
-        <Sunset className="size-5" />
+        <Moon className="size-5 text-primary" />
       ) : (
-        <Sunrise size={"size-5"} />
+        <Sun className="size-5 text-primary" />
       )}
     </Button>
   );

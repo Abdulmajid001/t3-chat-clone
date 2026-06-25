@@ -70,17 +70,18 @@ export const getAllChats = async () => {
       };
     }
 
-    const chats = await db.chat.findMany({
-      where: {
-        userId: user.id,
-      },
-      include: {
-        messages: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const { data: chats, error } = await supabase
+      .from("chats")
+      .select(
+        `
+        *,
+        messages (*)
+      `,
+      )
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) throw new Error(error.message);
 
     return {
       success: true,
@@ -96,83 +97,65 @@ export const getAllChats = async () => {
   }
 };
 
-export const getChatById = async(chatId)=>{
+export const getChatById = async (chatId) => {
   const user = await currentUser();
 
-  if(!user){
-    return {
-      success:false,
-      message:"Unauthorized user"
-    }
-  }
-
-  try {
-    const chat = await db.chat.findUnique({
-      where:{
-        id:chatId,
-        userId:user.id
-      },
-      include:{
-        messages:true
-      }
-    })
-    
-    return {
-      success:true,
-      message:"Chat Fetched Successfully",
-      data:chat
-    }
-  } catch (error) {
-     console.error("Error fetching chat:", error);
-      return {
-        success: false,
-        message: "Failed to fetch chat"
-      };
-  }
-}
-
-
-export const deleteChat = async(chatId)=>{
-  try {
-    const user = await currentUser();
-
-    if(!user){
-      return {
-        success:false,
-        message:"Unauthorized user"
-      }
-    }
-
-    const chat = await db.chat.findUnique({
-      where:{
-        id:chatId,
-        userId:user.id
-      }
-    })
-
-    if(!chat){
-      return {
-        success:false,
-        message:"Chat not found"
-      }
-    }
-
-    await db.chat.delete({
-      where:{
-        id:chatId
-      }
-    })
-
-    revalidatePath("/");
-    return {
-      success: true,
-      message: "Chat deleted successfully"
-    };
-  } catch (error) {
-     console.error("Error deleting chat:", error);
+  if (!user) {
     return {
       success: false,
-      message: "Failed to delete chat"
+      message: "Unauthorized user",
     };
   }
-}
+
+  try {
+    const chat = await db.chat.findUnique({
+      where: {
+        id: chatId,
+        userId: user.id,
+      },
+      include: {
+        messages: true,
+      },
+    });
+
+    return {
+      success: true,
+      message: "Chat Fetched Successfully",
+      data: chat,
+    };
+  } catch (error) {
+    console.error("Error fetching chat:", error);
+    return {
+      success: false,
+      message: "Failed to fetch chat",
+    };
+  }
+};
+
+export const deleteChat = async (chatId) => {
+  const user = await currentUser();
+
+  if (!user) {
+    return {
+      success: false,
+      message: "Unauthorized user",
+    };
+  }
+
+  const { error } = await supabase
+    .from("chats")
+    .delete()
+    .eq("id", chatId)
+    .eq("user_id", user.id);
+
+  if (error) {
+    // console.error(error.message);
+    throw new Error("Failed to delete chat, try again !");
+  }
+
+  revalidatePath("/");
+  return {
+    success: true,
+    message: "Chat deleted successfully",
+  };
+};

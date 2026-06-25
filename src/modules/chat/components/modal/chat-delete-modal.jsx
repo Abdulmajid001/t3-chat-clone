@@ -1,22 +1,23 @@
 "use client";
 import Modal from "@/components/ui/modal";
-import { useDeleteChat } from "../../hooks/chat";
-
 import React from "react";
 import { toast } from "sonner";
+import { useDeleteChat } from "../../hooks/use-chat";
 
 const DeleteChatModal = ({ isModalOpen, setIsModalOpen, chatId }) => {
   const { mutateAsync, isPending } = useDeleteChat(chatId);
 
   const handleDelete = async () => {
-    try {
-      await mutateAsync();
-      toast.success("Chat Deleted Successfully");
-      setIsModalOpen(false);
-    } catch (error) {
-      toast.error("Failed to delete chat");
-      console.error("Failed to delete chat:", error);
-    }
+    await mutateAsync();
+    setIsModalOpen(false);
+    // try {
+    //   await mutateAsync();
+    //   setIsModalOpen(false);
+    //   toast.success("Chat Deleted Successfully");
+    // } catch (error) {
+    //   toast.error("Failed to delete chat");
+    //   console.error("Failed to delete chat:", error);
+    // }
   };
 
   return (
