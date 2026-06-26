@@ -107,29 +107,44 @@ export const getChatById = async (chatId) => {
     };
   }
 
-  try {
-    const chat = await db.chat.findUnique({
-      where: {
-        id: chatId,
-        userId: user.id,
-      },
-      include: {
-        messages: true,
-      },
-    });
+  const { data: chat, error } = await supabase
+    .from("chats")
+    .select(`*, messages (*)`)
+    .eq("id", chatId)
+    .eq("user_id", user.id)
+    .single();
 
-    return {
-      success: true,
-      message: "Chat Fetched Successfully",
-      data: chat,
-    };
-  } catch (error) {
-    console.error("Error fetching chat:", error);
-    return {
-      success: false,
-      message: "Failed to fetch chat",
-    };
-  }
+  if (error) throw new Error("Error fetching chat");
+
+  return {
+    success: true,
+    message: "Chat Fetched Successfully",
+    data: chat,
+  };
+
+  // try {
+  //   const chat = await db.chat.findUnique({
+  //     where: {
+  //       id: chatId,
+  //       userId: user.id,
+  //     },
+  //     include: {
+  //       messages: true,
+  //     },
+  //   });
+
+  //   return {
+  //     success: true,
+  //     message: "Chat Fetched Successfully",
+  //     data: chat,
+  //   };
+  // } catch (error) {
+  //   console.error("Error fetching chat:", error);
+  //   return {
+  //     success: false,
+  //     message: "Failed to fetch chat",
+  //   };
+  // }
 };
 
 export const deleteChat = async (chatId) => {
